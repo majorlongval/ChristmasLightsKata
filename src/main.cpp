@@ -121,21 +121,4 @@ TEST_F(ChristmasLightsKataTester, canTurnOffManyLightsAtOnce)
     ASSERT_FALSE(lights.areOn(p44, p66));
 }
 
-TEST_F(ChristmasLightsKataTester, canToggleManyLights)
-{
-    vector<vector<int>> pointGroup1 = {p44, p45,
-                                       p54
-                                                    };
-    vector<vector<int>> pointGroup2 = {
-                                                 p56,
-                                            p65, p66};
-    ASSERT_FALSE(lights.areOn(p44, p66));
-    lights.toggle(p44, p55);
-    ASSERT_TRUE(lights.areOn(p44, p55));
-    lights.toggle(p55, p66);
-    ASSERT_TRUE(PointGroupAreSame(pointGroup1, true));
-    ASSERT_TRUE(PointGroupAreSame(pointGroup2, true));
-    ASSERT_FALSE(lights.isOn(p55));
-}
-
 }

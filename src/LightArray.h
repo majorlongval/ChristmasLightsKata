@@ -27,9 +27,9 @@ public:
 
 private:
     std::vector<uint32_t> lights;
-    void setValue(std::vector<int> p, uint32_t value);
-    void setValue(std::vector<int> p0, std::vector<int> p1, uint32_t value);
-    uint32_t getValue(std::vector<int> p);
+    void changeBrightness(std::vector<int> p, uint32_t value);
+    void changeBrightness(std::vector<int> p0, std::vector<int> p1, uint32_t value);
+    uint32_t getBrightness(std::vector<int> p);
     uint32_t totalBrightness;
 };
 
