@@ -138,28 +138,4 @@ TEST_F(ChristmasLightsKataTester, canToggleManyLights)
     ASSERT_FALSE(lights.isOn(p55));
 }
 
-TEST_F(ChristmasLightsKataTester, canCountHowManyAreOn)
-{
-    lights.turnOn(p44, p66); 
-    ASSERT_EQ(lights.nbOn(), 9);
-    lights.turnOff(p44, p55);
-    ASSERT_EQ(lights.nbOn(), 5);
-    lights.toggle(p54, p66);
-    ASSERT_EQ(lights.nbOn(), 3);
-}
-
-TEST_F(ChristmasLightsKataTester, phase1TestValidation)
-{
-    lights.turnOn({887, 9}, {959,629});
-    lights.turnOn({454,398}, {844,448});
-    lights.turnOff({539,243}, {559,965});
-    lights.turnOff({370,819}, {676,868});
-    lights.turnOff({145,40}, {370,997});
-    lights.turnOff({301,3}, {808,453});
-    lights.turnOn({351,678}, {951,908});
-    lights.toggle({720,196}, {897,994});
-    lights.toggle({831,394}, {904,860});
-    ASSERT_EQ(lights.nbOn(), 230022);
-}
-
 }
