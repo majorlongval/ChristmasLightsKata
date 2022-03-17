@@ -50,14 +50,6 @@ void Lights::turnOff(vector<int> p0, vector<int> p1)
 void Lights::toggle(vector<int> p)
 {
     this->changeBrightness(p, 2);
-    if (this->getBrightness(p) > 0)
-    {
-        this->changeBrightness(p, 0);
-    }
-    else
-    {
-        this->changeBrightness(p, 1);
-    }
 }
 
 void Lights::toggle(vector<int> p0, vector<int> p1)
@@ -73,9 +65,18 @@ void Lights::toggle(vector<int> p0, vector<int> p1)
 
 void Lights::changeBrightness(vector<int> p, uint32_t value)
 {
-    if (value != this->getBrightness(p))
+    if (value == 0)
     {
-        lights[p[0] + NB_ROWS*p[1]] = value;
+        if (!this->isOn(p))
+        {
+            lights[p[0] + NB_ROWS*p[1]] --;
+            totalBrightness --;
+        }
+    }
+    else 
+    {
+        lights[p[0] + NB_ROWS*p[1]] += value;
+        totalBrightness += value;
     }
     
 }
