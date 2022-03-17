@@ -31,6 +31,7 @@ private:
     void setValue(std::vector<int> p0, std::vector<int> p1, uint32_t value);
     uint32_t getValue(std::vector<int> p);
     uint32_t nbLightsOn;
+    uint32_t totalBrightness;
 };
 
 }
