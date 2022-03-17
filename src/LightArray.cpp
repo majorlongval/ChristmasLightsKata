@@ -5,7 +5,7 @@ using namespace std;
 using namespace  ChristmasLightsKata;
 
 
-Lights::Lights():lights(NB_ROWS*NB_COLUMNS, 0), nbLightsOn(0)
+Lights::Lights():lights(NB_ROWS*NB_COLUMNS, 0)
 {}
 
 bool Lights::isOn(vector<int> p)
@@ -70,25 +70,11 @@ void Lights::toggle(vector<int> p0, vector<int> p1)
     }
 }
 
-uint32_t Lights::nbOn()
-{
-    return nbLightsOn;
-}
-
 void Lights::setValue(vector<int> p, uint32_t value)
 {
     if (value != this->getValue(p))
     {
         lights[p[0] + NB_ROWS*p[1]] = value;
-        if (value == 0)
-        {
-            nbLightsOn --;
-        }
-        else 
-        {
-        nbLightsOn += value;
-        }
-        
     }
     
 }
