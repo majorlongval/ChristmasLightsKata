@@ -46,7 +46,7 @@ protected:
     bool PointGroupAreSame(vector<vector<int>> pointGroup, bool state)
     {
         bool areAllSame = true;
-        for (vector<int> point: pointGroup)
+        for (auto& point: pointGroup)
         {
             if(lights.isOn(point) != state)
             {
@@ -157,9 +157,9 @@ TEST_F(ChristmasLightsKataTester, phase1TestValidation)
     lights.turnOff({145,40}, {370,997});
     lights.turnOff({301,3}, {808,453});
     lights.turnOn({351,678}, {951,908});
-    lights.turnOn({720,196}, {897,994});
-    lights.turnOn({831,394}, {904,860});
-    ASSERT_EQ(lights.nbOn(), 280830);
+    lights.toggle({720,196}, {897,994});
+    lights.toggle({831,394}, {904,860});
+    ASSERT_EQ(lights.nbOn(), 230022);
 }
 
 }

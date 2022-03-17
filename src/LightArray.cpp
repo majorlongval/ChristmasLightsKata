@@ -21,8 +21,7 @@ bool Lights::areOn(vector<int> p0, vector<int> p1)
     {
         for (auto j = p0[1];j <= p1[1]; j++)
         {
-            vector<int> tmpPoint = {i, j};
-            isOn = isOn & (this->getValue(tmpPoint) > 0);
+            isOn = isOn & this->isOn({i, j});
         }
     }
     return isOn;
@@ -66,8 +65,7 @@ void Lights::toggle(vector<int> p0, vector<int> p1)
     {
         for (auto j = p0[1];j <= p1[1]; j++)
         {
-            vector<int> tmpPoint = {i, j};
-            toggle(tmpPoint);
+            toggle({i, j});
         }
     }
 }
@@ -103,8 +101,7 @@ void Lights::setValue(vector<int> p0, vector<int> p1, uint32_t value)
     {
         for (auto j = p0[1];j <= p1[1]; j++)
         {
-            vector<int> tmp_point = {i, j};
-            setValue(tmp_point, value);
+            setValue({i, j}, value);
         }
     }
 }
