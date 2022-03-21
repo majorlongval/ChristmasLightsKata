@@ -60,6 +60,9 @@ protected:
 
 TEST_F(ChristmasLightsKataTester, canTurnOnOneLight)
 {
+    ASSERT_FALSE(lights.isOn(p00));
+    lights.turnOn(p00);
+    ASSERT_TRUE(lights.isOn(p00));
     lights.turnOn(p00);
     ASSERT_TRUE(lights.isOn(p00));
 }
@@ -121,4 +124,49 @@ TEST_F(ChristmasLightsKataTester, canTurnOffManyLightsAtOnce)
     ASSERT_FALSE(lights.areOn(p44, p66));
 }
 
+TEST_F(ChristmasLightsKataTester, canToggleOneLight)
+{
+    lights.toggle(p00);
+    ASSERT_TRUE(lights.isOn(p00));
+    lights.turnOff(p00);
+    ASSERT_TRUE(lights.isOn(p00));
+    lights.turnOff(p00);
+    ASSERT_FALSE(lights.isOn(p00));
+}
+
+TEST_F(ChristmasLightsKataTester, brightnessCantBeLowerThanZero)
+{
+    lights.turnOff(p00);
+    lights.turnOff(p00);
+    lights.turnOn(p00);
+    ASSERT_TRUE(lights.isOn(p00));
+}
+
+TEST_F(ChristmasLightsKataTester, canGetTheTotalBrightness)
+{
+    lights.turnOn(p00);
+    ASSERT_EQ(lights.getTotalBrightness(), 1);
+    lights.turnOn({5, 5}, {9, 9});
+    ASSERT_EQ(lights.getTotalBrightness(), 26);
+    lights.turnOff({5, 5}, {9, 9});
+    lights.turnOn({0, 0}, {999, 999});
+    ASSERT_EQ(lights.getTotalBrightness(), 1000001);
+    lights.turnOff({0, 0}, {999, 999});
+    lights.toggle({0, 0}, {999, 999});
+    ASSERT_EQ(lights.getTotalBrightness(), 2000001);
+}
+
+TEST_F(ChristmasLightsKataTester, totalBrightnessFromSantasInstructions)
+{
+    lights.turnOn({887,9}, {959, 629});
+    lights.turnOn({454, 398}, {844, 448});
+    lights.turnOff({539, 243}, {559, 965});
+    lights.turnOff({370, 819}, {676, 868});
+    lights.turnOff({145, 40}, {370, 997});
+    lights.turnOff({301, 3}, {808, 453});
+    lights.turnOn({351, 678}, {951, 908});
+    lights.toggle({720, 196}, {897, 994});
+    lights.toggle({831, 394}, {904, 860});
+    ASSERT_EQ(lights.getTotalBrightness(), 539560);
+}
 }
