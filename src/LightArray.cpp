@@ -1,4 +1,5 @@
 #include "LightArray.h"
+#include <_types/_uint32_t.h>
 
 using namespace std;
 
@@ -49,14 +50,7 @@ void Lights::turnOff(vector<int> p0, vector<int> p1)
 
 void Lights::toggle(vector<int> p)
 {
-    if (this->getValue(p) > 0)
-    {
-        this->setValue(p, 0);
-    }
-    else
-    {
-        this->setValue(p, 1);
-    }
+    setValue(p,(int) !isOn(p));
 }
 
 void Lights::toggle(vector<int> p0, vector<int> p1)

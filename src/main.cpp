@@ -25,13 +25,15 @@ protected:
     vector<int> p65 = {6, 5};//
     vector<int> p66 = {6, 6};//
 
+    const bool TURNED_OFF = false;
+    const bool TURNED_ON = true;
 
-    void setValueOfPointGroup(vector<vector<int>> pointGroup, int value)
+    void setValueOfPointGroup(vector<vector<int>> pointGroup, int value) // set lights
     {
 
         for (vector<int> point: pointGroup)
         {
-            if (value>0)
+            if (value>0) // sortir le if.
             {
                 lights.turnOn(point);
             }
@@ -43,10 +45,10 @@ protected:
         }
     }
 
-    bool PointGroupAreSame(vector<vector<int>> pointGroup, bool state)
+    bool PointGroupAreSame(vector<vector<int>> points, bool state) //LightsAreInTheExpectedState
     {
         bool areAllSame = true;
-        for (auto& point: pointGroup)
+        for (auto& point: points)
         {
             if(lights.isOn(point) != state)
             {
@@ -73,29 +75,33 @@ TEST_F(ChristmasLightsKataTester, canTurnOffOneLight)
 
 TEST_F(ChristmasLightsKataTester, turningOnALight_ShouldOnlyTurnThisOneOn)
 {
+    vector<vector<int>> lightsAround = {p44, p45, p46,
+                                        p54,      p56,
+                                        p64, p65, p66};
+    
     lights.turnOn(p55);
-    vector<vector<int>> pointGroup = {p44, p45, p46,
-                                      p54,      p56,
-                                      p64, p65, p66};
+
     ASSERT_TRUE(lights.isOn(p55));
-    ASSERT_TRUE(PointGroupAreSame(pointGroup, false));
+    ASSERT_TRUE(PointGroupAreSame(lightsAround, TURNED_OFF));
 }
 
 TEST_F(ChristmasLightsKataTester, turningOffALight_ShouldOnlyTurnThisOneOff)
 {
-    vector<vector<int>> pointGroup =  {p44, p45, p46,
-                                       p54, p55, p56,
-                                       p64, p65, p66};
-    vector<vector<int>> pointGroup2 = {p44, p45, p46,
-                                       p54,      p56,
-                                       p64, p65, p66};
-    setValueOfPointGroup(pointGroup, 1);
+    vector<vector<int>> allLights =  {p44, p45, p46,
+                                      p54, p55, p56,
+                                      p64, p65, p66};
+    setValueOfPointGroup(allLights, 1);
+    vector<vector<int>> lightsAround = {p44, p45, p46,
+                                        p54,      p56,
+                                        p64, p65, p66};
+    
     lights.turnOff(p55);
+
     ASSERT_FALSE(lights.isOn(p55));
-    ASSERT_TRUE(PointGroupAreSame(pointGroup2, true));
+    ASSERT_TRUE(PointGroupAreSame(lightsAround, TURNED_ON));
 }
 
-TEST_F(ChristmasLightsKataTester, canCheckManyLightsAtOnce)
+TEST_F(ChristmasLightsKataTester, canCheckManyLightsAtOnce)// check if lights around the array are still off
 {
 
     vector<vector<int>> pointGroup =  {p44, p45, p46,
@@ -103,7 +109,7 @@ TEST_F(ChristmasLightsKataTester, canCheckManyLightsAtOnce)
                                        p64, p65, p66};
     ASSERT_TRUE(PointGroupAreSame(pointGroup, false));
     setValueOfPointGroup(pointGroup, 1);
-    ASSERT_TRUE(lights.areOn(p44, p66));
+    ASSERT_TRUE(lights.areOn(p44, p66));//p44 to p55
 }
 
 TEST_F(ChristmasLightsKataTester, canTurnOnManyLightsAtOnce)
