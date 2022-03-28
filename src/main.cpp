@@ -1,5 +1,9 @@
 ﻿#include "gtest.h"
+#include <string>
+#include <sstream>
+
 #include "LightArray.h"
+#include "gtest/gtest.h"
 
 using namespace std;
 
@@ -7,90 +11,129 @@ using namespace ChristmasLightsKata;
 
 namespace  {
 
-
 class ChristmasLightsKataTester : public ::testing::Test
 {
 protected:
     ChristmasLightsKataTester(){}
     virtual ~ChristmasLightsKataTester(){}
     Lights lights;
-    vector<int> p00 = {0, 0};//     HOW THE LIGHTS ARE DISPLAYED
-    vector<int> p44 = {4, 4};//
-    vector<int> p45 = {4, 5};//     *p00
-    vector<int> p46 = {4, 6};//
-    vector<int> p54 = {5, 4};//               *p44 *p45 *p46
-    vector<int> p55 = {5, 5};//               *p54 *p55 *p56
-    vector<int> p56 = {5, 6};//               *p64 *p65 *p66
-    vector<int> p64 = {6, 4};//
-    vector<int> p65 = {6, 5};//
-    vector<int> p66 = {6, 6};//
-
+    vector<vector<int>> lightCoordinates = 
+    {
+    {0, 0}, {0, 1}, {0, 2}, {0, 3},
+    {1, 0}, {1, 1}, {1, 2}, {1, 3},
+    {2, 0}, {2, 1}, {2, 2}, {2, 3},
+    {3, 0}, {3, 1}, {3, 2}, {3, 3}
+    };
     const bool TURNED_OFF = false;
     const bool TURNED_ON = true;
 
-    void setValueOfPointGroup(vector<vector<int>> pointGroup, int value) // set lights
+    void setLights(vector<vector<int>> lightGrid, bool state)
     {
-
-        for (vector<int> point: pointGroup)
+        if (state)
         {
-            if (value>0) // sortir le if.
+            for (vector<int> light: lightGrid)
             {
-                lights.turnOn(point);
-            }
-            else
-            {
-                lights.turnOff(point);
-            }
-
-        }
-    }
-
-    bool PointGroupAreSame(vector<vector<int>> points, bool state) //LightsAreInTheExpectedState
-    {
-        bool areAllSame = true;
-        for (auto& point: points)
-        {
-            if(lights.isOn(point) != state)
-            {
-                areAllSame = false;
-
+                lights.turnOn(light);
             }
         }
-        return areAllSame;
+        else
+        {
+            for (vector<int> light: lightGrid)
+            {
+                lights.turnOff(light);
+            }
+        }
+
     }
+    
+    testing::AssertionResult isInExpectedState(vector<int> light, bool state)
+    {
+        if (lights.isOn(light) == state)
+        {
+            return testing::AssertionSuccess();
+        }
+        else
+        {
+            return testing::AssertionFailure()<< "light at coordinate " << vecOfInt2String(light) <<" was not in state " << state;
+        } 
+    }
+
+    testing::AssertionResult lightsAreInExpectedState(vector<vector<int>>lightGrid, bool state) //LightsAreInTheExpectedState
+    {
+        vector<vector<int>> lightsInInvalidState;
+        for (auto& light: lightGrid)
+        {
+            if (! isInExpectedState(light, state))
+            {
+                lightsInInvalidState.push_back(light);
+            }
+            
+        }
+        if (lightsInInvalidState.empty())
+        {
+            return testing::AssertionSuccess();
+        }
+        else 
+        {
+            ostringstream oss;
+            oss << "lights are invalid at coordinates:";
+            for (auto& light: lightsInInvalidState)
+            {
+                oss << " " << vecOfInt2String(light);
+            }
+            return testing::AssertionFailure() << oss.str();
+        }
+        
+    }
+    
+
+    string vecOfInt2String(vector<int> inputVector)
+    {//Found in https://stackoverflow.com/questions/2518979/how-to-transform-a-vectorint-into-a-string
+        stringstream tmpStringStream;
+        copy( inputVector.begin(), inputVector.end(), ostream_iterator<int>(tmpStringStream, ","));
+
+        string outputString = tmpStringStream.str();
+
+        outputString = "{" +outputString.substr(0, outputString.length()-1) + "}";  // get rid of the trailing space
+        return outputString;
+    }
+
 };
+
+
 
 TEST_F(ChristmasLightsKataTester, canTurnOnOneLight)
 {
-    lights.turnOn(p00);
-    ASSERT_TRUE(lights.isOn(p00));
+    lights.turnOn({0, 0});
+    EXPECT_TRUE(isInExpectedState({0, 0}, TURNED_ON));
 }
 
 TEST_F(ChristmasLightsKataTester, canTurnOffOneLight)
 {
-    lights.turnOn(p00);
-    lights.turnOff(p00);
-    ASSERT_FALSE(lights.isOn(p00));
+    
+    lights.turnOn({0, 0});
+    lights.turnOff({0, 0});
+    ASSERT_FALSE(lights.isOn({0, 0}));
 }
 
 TEST_F(ChristmasLightsKataTester, turningOnALight_ShouldOnlyTurnThisOneOn)
 {
-    vector<vector<int>> lightsAround = {p44, p45, p46,
-                                        p54,      p56,
-                                        p64, p65, p66};
+    vector<vector<int>> lightsAround = {{0, 0}, {0, 1}, {0, 2},
+                                        {1, 0},         {1, 2},
+                                        {2, 0}, {2, 1}, {2, 2}};
     
-    lights.turnOn(p55);
+    lights.turnOn({1, 2});
 
-    ASSERT_TRUE(lights.isOn(p55));
-    ASSERT_TRUE(PointGroupAreSame(lightsAround, TURNED_OFF));
+    EXPECT_TRUE(lights.isOn({1, 1}));
+    EXPECT_TRUE(lightsAreInExpectedState(lightsAround, TURNED_OFF));
 }
-
+/*
 TEST_F(ChristmasLightsKataTester, turningOffALight_ShouldOnlyTurnThisOneOff)
 {
     vector<vector<int>> allLights =  {p44, p45, p46,
                                       p54, p55, p56,
                                       p64, p65, p66};
-    setValueOfPointGroup(allLights, 1);
+    setLights(allLights, 1);
     vector<vector<int>> lightsAround = {p44, p45, p46,
                                         p54,      p56,
                                         p64, p65, p66};
@@ -98,17 +141,16 @@ TEST_F(ChristmasLightsKataTester, turningOffALight_ShouldOnlyTurnThisOneOff)
     lights.turnOff(p55);
 
     ASSERT_FALSE(lights.isOn(p55));
-    ASSERT_TRUE(PointGroupAreSame(lightsAround, TURNED_ON));
+    lightsAreInExpectedState(lightsAround, TURNED_ON);
 }
 
 TEST_F(ChristmasLightsKataTester, canCheckManyLightsAtOnce)// check if lights around the array are still off
 {
-
     vector<vector<int>> pointGroup =  {p44, p45, p46,
                                        p54, p55, p56,
                                        p64, p65, p66};
-    ASSERT_TRUE(PointGroupAreSame(pointGroup, false));
-    setValueOfPointGroup(pointGroup, 1);
+    lightsAreInExpectedState(pointGroup, false);
+    setLights(pointGroup, 1);
     ASSERT_TRUE(lights.areOn(p44, p66));//p44 to p55
 }
 
@@ -127,6 +169,35 @@ TEST_F(ChristmasLightsKataTester, canTurnOffManyLightsAtOnce)
     ASSERT_FALSE(lights.areOn(p44, p66));
 }
 
+TEST_F(ChristmasLightsKataTester, singleToggle_ShouldSwitchOnAndOffALight)
+{
+    lights.toggle(p44);
+    ASSERT_TRUE(lights.isOn(p44));
+
+    lights.toggle(p44);
+    ASSERT_FALSE(lights.isOn(p44));
+}
+
+TEST_F(ChristmasLightsKataTester, singleToggle_ShouldOnlyAffectSpecifiedLight)
+{
+    vector<vector<int>> unaffectedLights =  {p44, p45, p46,
+                                             p54,      p56,
+                                             p64, p65, p66};
+    
+    lights.toggle(p55);
+
+    lightsAreInExpectedState(unaffectedLights, TURNED_OFF);
+}
+
+TEST_F(ChristmasLightsKataTester, multiToggle_ShouldSwitchOnAndOffSpecifiedLights)
+{
+    lights.toggle(p44, p55);
+    ASSERT_TRUE(lights.areOn(p44, p55));
+
+    lights.toggle(p44);
+    ASSERT_FALSE(lights.isOn(p44));
+}
+
 TEST_F(ChristmasLightsKataTester, canToggleManyLights)
 {
     vector<vector<int>> pointGroup1 = {p44, p45,
@@ -139,8 +210,8 @@ TEST_F(ChristmasLightsKataTester, canToggleManyLights)
     lights.toggle(p44, p55);
     ASSERT_TRUE(lights.areOn(p44, p55));
     lights.toggle(p55, p66);
-    ASSERT_TRUE(PointGroupAreSame(pointGroup1, true));
-    ASSERT_TRUE(PointGroupAreSame(pointGroup2, true));
+    lightsAreInExpectedState(pointGroup1, true);
+    lightsAreInExpectedState(pointGroup2, true);
     ASSERT_FALSE(lights.isOn(p55));
 }
 
@@ -167,5 +238,5 @@ TEST_F(ChristmasLightsKataTester, phase1TestValidation)
     lights.toggle({831,394}, {904,860});
     ASSERT_EQ(lights.nbOn(), 230022);
 }
-
+*/
 }

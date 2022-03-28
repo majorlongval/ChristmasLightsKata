@@ -16,7 +16,7 @@ public:
     virtual ~Lights() = default;
 
     bool isOn(std::vector<int> p);
-    bool areOn(std::vector<int> p0, std::vector<int> p1);
+    bool areOn(std::vector<int> p0, std::vector<int> p1);//fromPoint toPoint
     void turnOn(std::vector<int> p);
     void turnOn(std::vector<int> p0, std::vector<int> p1);
     void turnOff(std::vector<int> p);
