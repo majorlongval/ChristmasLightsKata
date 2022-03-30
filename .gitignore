@@ -53,3 +53,7 @@ build/*
 
 ################################## removing the .cache folder
 .cache/
+
+################################## removing the .history file and the .vscode file
+.history
+.vscode

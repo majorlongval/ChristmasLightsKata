@@ -1,5 +1,4 @@
 #include "LightArray.h"
-#include <_types/_uint32_t.h>
 
 using namespace std;
 

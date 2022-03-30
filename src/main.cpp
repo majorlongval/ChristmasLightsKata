@@ -31,14 +31,14 @@ protected:
     {
         if (state)
         {
-            for (vector<int> light: lightGrid)
+            for (auto& light: lightGrid)
             {
                 lights.turnOn(light);
             }
         }
         else
         {
-            for (vector<int> light: lightGrid)
+            for (auto& light: lightGrid)
             {
                 lights.turnOff(light);
             }
@@ -54,7 +54,9 @@ protected:
         }
         else
         {
-            return testing::AssertionFailure()<< "light at coordinate " << vecOfInt2String(light) <<" was not in state " << state;
+            return testing::AssertionFailure()<< "light at coordinate " << 
+                                              vecOfInt2String(light) <<
+                                              " was not in state " << state;
         } 
     }
 
@@ -100,11 +102,10 @@ protected:
 
 };
 
-
-
 TEST_F(ChristmasLightsKataTester, canTurnOnOneLight)
 {
     lights.turnOn({0, 0});
+
     EXPECT_TRUE(isInExpectedState({0, 0}, TURNED_ON));
 }
 
@@ -112,7 +113,9 @@ TEST_F(ChristmasLightsKataTester, canTurnOffOneLight)
 {
     
     lights.turnOn({0, 0});
+
     lights.turnOff({0, 0});
+
     ASSERT_FALSE(lights.isOn({0, 0}));
 }
 
@@ -122,28 +125,75 @@ TEST_F(ChristmasLightsKataTester, turningOnALight_ShouldOnlyTurnThisOneOn)
                                         {1, 0},         {1, 2},
                                         {2, 0}, {2, 1}, {2, 2}};
     
-    lights.turnOn({1, 2});
+    lights.turnOn({1, 1});
 
     EXPECT_TRUE(lights.isOn({1, 1}));
     EXPECT_TRUE(lightsAreInExpectedState(lightsAround, TURNED_OFF));
 }
-/*
+
 TEST_F(ChristmasLightsKataTester, turningOffALight_ShouldOnlyTurnThisOneOff)
 {
-    vector<vector<int>> allLights =  {p44, p45, p46,
-                                      p54, p55, p56,
-                                      p64, p65, p66};
-    setLights(allLights, 1);
-    vector<vector<int>> lightsAround = {p44, p45, p46,
-                                        p54,      p56,
-                                        p64, p65, p66};
-    
-    lights.turnOff(p55);
+    vector<vector<int>> lightsAround = {{0, 0}, {0, 1}, {0, 2},
+                                        {1, 0},         {1, 2},
+                                        {2, 0}, {2, 1}, {2, 2}};
+    lights.turnOn({0, 0}, {2, 2});
 
-    ASSERT_FALSE(lights.isOn(p55));
-    lightsAreInExpectedState(lightsAround, TURNED_ON);
+    lights.turnOff({1, 1});
+
+    EXPECT_FALSE(lights.isOn({1, 1}));
+    EXPECT_TRUE(lightsAreInExpectedState(lightsAround, TURNED_ON));
 }
 
+TEST_F(ChristmasLightsKataTester, canTurnOnManyLightsAtOnce)   
+{
+    vector<vector<int>> lightGrid = {{1, 1}, {1, 2},
+                                     {2, 1}, {2, 2}};
+
+    lights.turnOn({1, 1}, {2, 2});
+
+    EXPECT_TRUE(lights.areOn({1, 1}, {2, 2}));
+}
+
+TEST_F(ChristmasLightsKataTester, turningOnSomeLights_ShouldOnlyTurnThoseOn)
+{
+    vector<vector<int>> lightsAround = {{0, 0}, {0, 1}, {0, 2}, {0, 3},
+                                        {1, 0},                 {1, 3},
+                                        {2, 0},                 {2, 3},
+                                        {3, 0}, {3, 1}, {3, 2}, {3, 3}};
+
+
+    lights.turnOn({1, 1}, {2, 2});
+
+    EXPECT_TRUE(lightsAreInExpectedState(lightsAround, TURNED_OFF));
+}
+
+TEST_F(ChristmasLightsKataTester, turningOffSomeLights_ShouldOnlyTurnThoseOff)
+{
+    vector<vector<int>> lightsAround = {{0, 0}, {0, 1}, {0, 2}, {0, 3},
+                                        {1, 0},                 {1, 3},
+                                        {2, 0},                 {2, 3},
+                                        {3, 0}, {3, 1}, {3, 2}, {3, 3}};
+    lights.turnOn({0, 0}, {3, 3});
+
+    lights.turnOff({1, 1}, {2, 2});
+
+    EXPECT_TRUE(lightsAreInExpectedState(lightsAround, TURNED_ON));
+}
+
+TEST_F(ChristmasLightsKataTester, canToggleASingleLight)
+{
+    lights.toggle({1, 1});
+    ASSERT_TRUE(isInExpectedState({1, 1}, TURNED_ON));
+    
+    lights.toggle({1, 1});
+    ASSERT_TRUE(isInExpectedState({1, 1}, TURNED_OFF));
+}
+
+TEST_F(ChristmasLightsKataTester, canToggleManyLightsAtOnce)
+{
+    ASSERT_EQ(0, 0);
+}
+/*
 TEST_F(ChristmasLightsKataTester, canCheckManyLightsAtOnce)// check if lights around the array are still off
 {
     vector<vector<int>> pointGroup =  {p44, p45, p46,
