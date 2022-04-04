@@ -15,21 +15,24 @@ public:
     Lights();
     virtual ~Lights() = default;
 
-    bool isOn(std::vector<int> p);
-    bool areOn(std::vector<int> p0, std::vector<int> p1);//fromPoint toPoint
-    void turnOn(std::vector<int> p);
-    void turnOn(std::vector<int> p0, std::vector<int> p1);
-    void turnOff(std::vector<int> p);
-    void turnOff(std::vector<int> p0, std::vector<int> p1);
-    void toggle(std::vector<int> p);
-    void toggle(std::vector<int> p0, std::vector<int> p1);
+    void turnOn(std::vector<int> lightPosition);
+    void turnOn(std::vector<int> fromLightPosition, 
+                std::vector<int> toLightPosition);
+    void turnOff(std::vector<int> lightPosition);
+    void turnOff(std::vector<int> fromLightPosition, 
+                 std::vector<int> toLightPosition);
+    void toggle(std::vector<int> lightposition);
+    void toggle(std::vector<int> fromLightPosition, 
+                std::vector<int> toLightPosition);
+    bool isOn(std::vector<int> lightPosition);
+    bool areOn(std::vector<int> fromLightPosition, std::vector<int> toLightPosition);
     uint32_t nbOn();
 
 private:
     std::vector<uint32_t> lights;
-    void setValue(std::vector<int> p, uint32_t value);
-    void setValue(std::vector<int> p0, std::vector<int> p1, uint32_t value);
-    uint32_t getValue(std::vector<int> p);
+    void setValue(std::vector<int> lightPosition, uint32_t value);
+    void setValue(std::vector<int> fromLightPosition, std::vector<int> toLightPosition, uint32_t value);
+    uint32_t getValue(std::vector<int> lightPosition);
     uint32_t nbLightsOn;
 };
 

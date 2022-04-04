@@ -13,13 +13,13 @@ bool Lights::isOn(vector<int> p)
     return (getValue(p) > 0);
 }
 
-bool Lights::areOn(vector<int> p0, vector<int> p1)
+bool Lights::areOn(vector<int> fromLightPosition, vector<int> toLightPosition)
 {
     bool isOn = true;
     //Considering p0 is always smaller (both components) than p1
-    for (auto i = p0[0];i <= p1[0]; i++)
+    for (auto i = fromLightPosition[0];i <= toLightPosition[0]; i++)
     {
-        for (auto j = p0[1];j <= p1[1]; j++)
+        for (auto j = fromLightPosition[1];j <= toLightPosition[1]; j++)
         {
             isOn = isOn & this->isOn({i, j});
         }
@@ -27,36 +27,36 @@ bool Lights::areOn(vector<int> p0, vector<int> p1)
     return isOn;
 }
 
-void Lights::turnOn(vector<int> p)
+void Lights::turnOn(vector<int> lightPosition)
 {
-    setValue(p, 1);
+    setValue(lightPosition, 1);
 }
 
-void Lights::turnOn(vector<int> p0, vector<int> p1)
+void Lights::turnOn(vector<int> fromLightPosition, vector<int> toLightPosition)
 {
-    setValue(p0, p1, 1);
+    setValue(fromLightPosition, toLightPosition, 1);
 }
 
-void Lights::turnOff(vector<int> p)
+void Lights::turnOff(vector<int> LightPosition)
 {
-    setValue(p, 0);
+    setValue(LightPosition, 0);
 }
 
-void Lights::turnOff(vector<int> p0, vector<int> p1)
+void Lights::turnOff(vector<int> fromLightPosition, vector<int> toLightPosition)
 {
-    setValue(p0, p1, 0);
+    setValue(fromLightPosition, toLightPosition, 0);
 }
 
-void Lights::toggle(vector<int> p)
+void Lights::toggle(vector<int> lightPosition)
 {
-    setValue(p,(int) !isOn(p));
+    setValue(lightPosition,(int) !isOn(lightPosition));
 }
 
-void Lights::toggle(vector<int> p0, vector<int> p1)
+void Lights::toggle(vector<int> fromLightPosition, vector<int> toLightPosition)
 {
-    for (auto i = p0[0];i <= p1[0]; i++)
+    for (auto i = fromLightPosition[0];i <= toLightPosition[0]; i++)
     {
-        for (auto j = p0[1];j <= p1[1]; j++)
+        for (auto j = fromLightPosition[1];j <= toLightPosition[1]; j++)
         {
             toggle({i, j});
         }
@@ -68,11 +68,11 @@ uint32_t Lights::nbOn()
     return nbLightsOn;
 }
 
-void Lights::setValue(vector<int> p, uint32_t value)
+void Lights::setValue(vector<int> lightPosition, uint32_t value)
 {
-    if (value != this->getValue(p))
+    if (value != this->getValue(lightPosition))
     {
-        lights[p[0] + NB_ROWS*p[1]] = value;
+        lights[lightPosition[0] + NB_ROWS*lightPosition[1]] = value;
         if (value == 0)
         {
             nbLightsOn --;
@@ -86,21 +86,21 @@ void Lights::setValue(vector<int> p, uint32_t value)
     
 }
 
-void Lights::setValue(vector<int> p0, vector<int> p1, uint32_t value)
+void Lights::setValue(vector<int> fromLightPosition, vector<int> toLightPosition, uint32_t value)
 {
     //Considering p0 is always smaller (both components) than p1
 
-    for (auto i = p0[0];i <= p1[0]; i++)
+    for (auto i = fromLightPosition[0];i <= toLightPosition[0]; i++)
     {
-        for (auto j = p0[1];j <= p1[1]; j++)
+        for (auto j = fromLightPosition[1];j <= toLightPosition[1]; j++)
         {
             setValue({i, j}, value);
         }
     }
 }
 
-uint32_t Lights::getValue(vector<int> p)
+uint32_t Lights::getValue(vector<int> lightPosition)
 {
-    return lights[p[0] + NB_ROWS*p[1]];
+    return lights[lightPosition[0] + NB_ROWS*lightPosition[1]];
 }
 
